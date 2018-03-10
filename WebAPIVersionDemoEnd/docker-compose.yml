@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  jackwebapidemo:
+    image: demo:1.0.0
+    container_name: jack_say_hi
+    network_mode: bridge
+    ports:
+      - "8080:80"
