@@ -29,6 +29,19 @@
     <ProjectReference Include="..\Demo.Domain\Demo.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="version.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ProjectExtensions><VisualStudio><UserProperties version_1json__JSONSchema="http://json-schema.org/draft-04/schema" /></VisualStudio></ProjectExtensions>
-
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
 </Project>
