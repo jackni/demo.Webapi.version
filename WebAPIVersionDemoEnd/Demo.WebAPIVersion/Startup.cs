@@ -49,6 +49,7 @@ namespace WebAPIVersionDemoStart
             {
                 c.SwaggerEndpoint("/swagger/Math 1.0/swagger.json", "Math API 1.0");
                 c.SwaggerEndpoint("/swagger/Math 2.0/swagger.json", "Math API 2.0");
+                c.SwaggerEndpoint("/swagger/Todo demo/swagger.json", "Todo demo");
             });
 
            

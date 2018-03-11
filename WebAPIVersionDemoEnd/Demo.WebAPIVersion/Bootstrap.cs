@@ -1,6 +1,8 @@
-﻿using Demo.Domain;
+﻿using Demo.DataAccess;
+using Demo.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,9 +28,16 @@ namespace Demo.WebAPIVersion
             serviceCollection.AddOptions()
                 .Configure<AppVersion>(versioningSection);
 
+            //Ef core contenxt 
+            serviceCollection.AddDbContext<DemoContext>(options =>
+                options.UseSqlServer(config.GetConnectionString("demoDb")));
+
             //pre-request.
-            serviceCollection.AddScoped<ISimpleMath, SimpleMath>();
-            serviceCollection.AddScoped<ISimpleMathV2, SimpleMath>();
+            serviceCollection.AddScoped<ITodoRepository, TodoRepository>();
+
+            //transint
+            serviceCollection.AddTransient<ISimpleMath, SimpleMath>();
+            serviceCollection.AddTransient<ISimpleMathV2, SimpleMath>();
 
             serviceCollection.AddMvc();
 
@@ -50,6 +59,7 @@ namespace Demo.WebAPIVersion
                 //grouping
                 c.SwaggerDoc($"Math 1.0", swaggerDocInfo);
                 c.SwaggerDoc($"Math 2.0", swaggerDocInfo);
+                c.SwaggerDoc($"Todo demo", swaggerDocInfo);
             });
         }
     }
