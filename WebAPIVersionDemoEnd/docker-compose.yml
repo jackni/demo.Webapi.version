@@ -5,9 +5,11 @@ services:
     image: microsoft/mssql-server-linux:latest
     container_name: sql2017
     network_mode: bridge
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=Pass$w0rd!
+    env_file:
+      - ./dbConfig.env
+    # environment:
+    #   - ACCEPT_EULA=Y
+    #   - SA_PASSWORD=Pass$w0rd!12345
     ports:
       - "1433:1433"
 
