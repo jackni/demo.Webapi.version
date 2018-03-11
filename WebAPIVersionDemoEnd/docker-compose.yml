@@ -1,9 +1,21 @@
 version: '3'
 
 services:
+  db:
+    image: microsoft/mssql-server-linux:latest
+    container_name: sql2017
+    network_mode: bridge
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Pass$w0rd!
+    ports:
+      - "1433:1433"
+
   jackwebapidemo:
     image: demo:1.0.0
     container_name: jack_say_hi
     network_mode: bridge
     ports:
       - "8080:80"
+    depends_on: 
+      - db
