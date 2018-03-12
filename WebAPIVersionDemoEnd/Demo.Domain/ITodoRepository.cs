@@ -7,6 +7,7 @@ namespace Demo.Domain
     public interface ITodoRepository
     {
         Task Add(Todo todo);
-        IAsyncEnumerable<Todo> ListAll();
+
+        Task<IEnumerable<Todo>> ListAll();
     }
 }

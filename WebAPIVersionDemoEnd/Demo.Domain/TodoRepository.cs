@@ -1,5 +1,6 @@
 ﻿using Demo.DataAccess;
 using Demo.DataAccess.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,9 @@ namespace Demo.Domain
         {
             _dbContext = demoContext;
         }
-        public IAsyncEnumerable<Todo> ListAll()
+        public async Task<IEnumerable<Todo>> ListAll()
         {
-            return _dbContext.Todos.ToAsyncEnumerable();
+            return await _dbContext.Todos.ToListAsync();
         }
 
         public async Task Add(Todo todo)
