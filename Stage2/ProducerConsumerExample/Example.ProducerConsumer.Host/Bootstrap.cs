@@ -23,7 +23,7 @@ namespace Example.ProducerConsumer.Host
 
             // configuration inject
             serviceCollection.AddOptions()
-                .Configure<ApplicationSettings>(config.GetSection("settings"));
+                .Configure<ApplicationSettings>(config.GetSection("applicationSettings"));
             serviceCollection.AddOptions()
                 .Configure<BrokerSettings>(config.GetSection("brokerSettings"));
 
@@ -32,6 +32,7 @@ namespace Example.ProducerConsumer.Host
 			serviceCollection.AddTransient<IValidator<IPayload>, PayloadValidator>();
 			serviceCollection.AddTransient<IEventProcessor, EventProcessor>();
             serviceCollection.AddTransient<ISimpleCommandHandler, SimpleCommandHandler>();
+
             // this may not need in MT 5
             serviceCollection.AddScoped<SimpleCommandConsumer>();
             serviceCollection.AddScoped<SimpleCommandFaultComsumer>();

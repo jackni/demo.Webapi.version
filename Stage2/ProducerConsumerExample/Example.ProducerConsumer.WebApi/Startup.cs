@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
+using Example.ProducerConsumer.WebApi.Infrastructure;
+using Example.Settings;
+using MassTransit;
+using MassTransit.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -13,28 +15,74 @@ namespace Example.ProducerConsumer.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+		public IConfiguration Configuration { get; }
+
+		public Startup(IConfiguration configuration, IHostingEnvironment env)
+		{
+			Configuration =
+				new ConfigurationBuilder()
+					.SetBasePath(Directory.GetCurrentDirectory())
+					.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+					.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+					.AddEnvironmentVariables()
+					.Build();
+		}
+
+		// This method gets called by the runtime. Use this method to add services to the container.		
+		public void ConfigureServices(IServiceCollection services)
+		{
+			Bootstrap.ConfigureServices(services, Configuration);
+		}
+
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		public void Configure(IApplicationBuilder app,
+			IHostingEnvironment env,
+			IServiceProvider serviceProvider,
+			IApplicationLifetime applicationLifetime,
+			ILoggerFactory loggerFactory)
         {
-            Configuration = configuration;
-        }
+			try
+			{
+				if (env.IsDevelopment())
+				{
+					app.UseDeveloperExceptionPage();
+				}
 
-        public IConfiguration Configuration { get; }
+				var applicationSettings = serviceProvider.GetService<IOptions<ApplicationSettings>>().Value;
+				if (applicationSettings.WebapiEnable)
+				{
+					// Enable middle-ware to serve generated Swagger as a JSON endpoint.
+					app.UseSwagger();
+					// Enable middle-ware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+					app.UseSwaggerUI(c =>
+					{
+						c.SwaggerEndpoint("/swagger/SimpleCommand/swagger.json", $"Demo SimpleCommand API");						
+					});
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvc();
-        }
+					app.UseExceptionMiddleware();
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+					app.UseMvc();
+				}
 
-            app.UseMvc();
+				if (applicationSettings.MessageBusEnable)
+				{
+					//trigger bus start.
+					var bus = serviceProvider.GetService<IBusControl>();
+					applicationLifetime.ApplicationStarted.Register(() => TaskUtil.Await(() => bus.StartAsync()));
+					applicationLifetime.ApplicationStopping.Register(() => TaskUtil.Await(() => bus.StopAsync()));
+				}
+			}
+			catch(Exception ex)
+			{
+				var baseEx = ex.GetBaseException();
+				var logger = serviceProvider.GetService<ILogger<Startup>>();
+				logger.LogCritical($"###Application FATAL Error: {baseEx.Message} ###");
+#if DEBUG
+				Console.ReadLine();
+#endif
+				throw;
+			}
+
         }
     }
 }

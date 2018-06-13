@@ -12,14 +12,26 @@ namespace Example.ProducerConsumer.WebApi
 {
     public class Program
     {
-        public static void Main(string[] args)
-        {
-            BuildWebHost(args).Run();
-        }
+		public static void Main(string[] args)
+		{
+			BuildWebHost(args).Run();
+		}
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
-    }
+		public static IWebHost BuildWebHost(string[] args)
+		{
+			var hostConfig = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("hosting.json", optional: true)
+				.AddCommandLine(args)
+				.Build();
+
+			return WebHost.CreateDefaultBuilder(args)
+				.UseUrls("http://*:10000")
+				.UseConfiguration(hostConfig)
+				.UseKestrel()
+				.UseContentRoot(Directory.GetCurrentDirectory())
+				.UseStartup<Startup>()				
+				.Build();
+		}
+	}
 }
