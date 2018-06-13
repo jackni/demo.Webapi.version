@@ -5,8 +5,8 @@ LABEL description="DevOpsDemo"
 
 FROM microsoft/aspnetcore-build:2.0.5-2.1.4 AS build 
 
-ENV http_proxy='http://10.62.1.22:3128'
-ENV https_proxy='http://10.62.1.22:3128'
+# ENV http_proxy='<your proxy>'
+# ENV https_proxy='<your proxy>'
 
 # specify the dir inside container. eg. if the current code are in root folder called src then /src
 # WORKDIR is container context swith..

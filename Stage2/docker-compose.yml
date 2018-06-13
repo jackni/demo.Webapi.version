@@ -6,4 +6,4 @@ services:
     container_name: devOpsDemo
     network_mode: bridge
     ports:
-      - "8080:80"    
+      - "80:80"    
