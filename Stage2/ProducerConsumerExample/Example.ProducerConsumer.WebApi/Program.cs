@@ -26,7 +26,7 @@ namespace Example.ProducerConsumer.WebApi
 				.Build();
 
 			return WebHost.CreateDefaultBuilder(args)
-				.UseUrls("http://*:10000")
+				.UseUrls("http://*:80")
 				.UseConfiguration(hostConfig)
 				.UseKestrel()
 				.UseContentRoot(Directory.GetCurrentDirectory())

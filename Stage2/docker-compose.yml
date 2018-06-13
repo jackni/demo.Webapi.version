@@ -1,0 +1,9 @@
+version: '3'
+
+services:  
+  jack-devOps-demo:
+    image: demo-registory:5000/demo-devops:0.0.0.1
+    container_name: devOpsDemo
+    network_mode: bridge
+    ports:
+      - "8080:80"    
